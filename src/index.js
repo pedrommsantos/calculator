@@ -14,8 +14,8 @@ class Button extends React.Component {
 class Display extends React.Component {
   render() {
     return (
-      <div class="display">
-        <div>{this.props.displayValue ? this.props.displayValue : 0}</div>
+      <div className="display">
+        <div>{this.props.valueToShow ? this.props.valueToShow : 0}</div>
       </div>
     );
   }
@@ -44,16 +44,26 @@ class Panel extends React.Component {
     );
   }
 
+  renderButtonWide(i) {
+    return (
+      <div className="button wide">
+        <Button
+          value={i}
+          onClick={() => this.props.onClick(i)}
+        />
+      </div>
+    );
+  }
 
   render() {
     return (
-      <div class="app">
-            <Display displayValue={this.props.displayValue}/>
-            <div class="button-panel">
+      <div className="app">
+            <Display valueToShow={this.props.valueToShow}/>
+            <div className="button-panel">
                 <div>
                     {this.renderButton('AC')}
-                    <div class="button"><button>+/-</button></div>
-                    <div class="button"><button>%</button></div>
+                    <div className="button"><button>+/-</button></div>
+                    <div className="button"><button>%</button></div>
                     {this.renderButtonOperator('÷')}
                 </div>
                 <div>
@@ -75,7 +85,7 @@ class Panel extends React.Component {
                     {this.renderButtonOperator('+')}
                 </div>
                 <div>
-                    <div class="button  wide"><button>0</button></div>
+                    {this.renderButtonWide(0)}
                     {this.renderButton('.')}
                     {this.renderButtonOperator('=')}
                 </div>
@@ -90,9 +100,11 @@ class Calculator extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      displayValue: '',
-      factor: '',
-      operator: ''
+      valueToShow: '',
+      factorX: '',
+      factorY: '',
+      operator: '',
+      result: ''
     };
   }
 
@@ -101,7 +113,11 @@ class Calculator extends React.Component {
     switch(i) {
       case 'AC':
         this.setState({
-          displayValue: '',
+          valueToShow: '',
+          factorX: '',
+          factorY: '',
+          operator: '',
+          result: ''
         });
         break;
       case 'x':
@@ -118,10 +134,10 @@ class Calculator extends React.Component {
         break;
       case '=':
         if(this.state.operator != null && this.state.operator !== '='){
-          this.doTheMath(this.state.displayValue, this.state.factor, this.state.operator)
+          this.doTheMath(+this.state.factorX, +this.state.factorY, this.state.operator)
         } else {
           this.setState({
-            displayValue: this.state.displayValue,
+            result: this.state.result,
           });
         }
         break;
@@ -144,35 +160,43 @@ class Calculator extends React.Component {
       '/': function (x, y) { return x / y }
     }
     this.setState({
-      displayValue: calc[operator](x, y),
+      result: calc[operator](x, y)
     });
-    console.log(this.state)
   }
 
   handleClick(i) {
-    let currentValue = this.state.displayValue;
+    let currentX = this.state.factorX;
+    let currentY = this.state.factorY;
     if(Number.isInteger(i)) {
       if(!this.state.operator) {
         this.setState({
-          displayValue: currentValue + '' + i,
+          factorX: currentX + '' + i,
         });
       } else {
         this.setState({
-          factor: i,
+          factorY: currentY + '' + i,
         });
       }
     } else {
-      this.operatorSelector(i, currentValue)
+      this.operatorSelector(i)
     }
   }
 
   render() {
+    let displayValue;
+    if(this.state.result){
+      displayValue = this.state.result;
+    } else if(this.state.factorY) {
+      displayValue = this.state.factorY;
+    } else {
+      displayValue = this.state.factorX;
+    }
     return (
       <div className="calculator">
         <div id="root">
           <Panel 
             onClick={(i) => this.handleClick(i)}
-            displayValue={this.state.displayValue}/>
+            valueToShow={displayValue}/>
         </div>
       </div>
     );
