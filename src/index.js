@@ -135,9 +135,6 @@ class Calculator extends React.Component {
         if(this.state.operator)
           this.doTheMath(+this.state.factorX, +this.state.factorY, this.state.operator)
         break;
-      case '.':
-        console.log(this.state)
-        break;
       case '%':
         console.log(this.state)
         break;
