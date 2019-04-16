@@ -6,7 +6,7 @@ import './index.css';
 class Button extends React.Component {
   render() {
     return (
-        <button onClick={() => { this.props.onClick() }}>{this.props.value}</button>
+      <button onClick={() => { this.props.onClick() }}>{this.props.value}</button>
     );
   }
 }
@@ -58,39 +58,38 @@ class Panel extends React.Component {
   render() {
     return (
       <div className="app">
-            <Display valueToShow={this.props.valueToShow}/>
-            <div className="button-panel">
-                <div>
-                    {this.renderButton('AC')}
-                    <div className="button"><button>+/-</button></div>
-                    <div className="button"><button>%</button></div>
-                    {this.renderButtonOperator('÷')}
-                </div>
-                <div>
-                    {this.renderButton(7)}
-                    {this.renderButton(8)}
-                    {this.renderButton(9)}
-                    {this.renderButtonOperator('x')}
-                </div>
-                <div>
-                    {this.renderButton(4)}
-                    {this.renderButton(5)}
-                    {this.renderButton(6)}
-                    {this.renderButtonOperator('-')}
-                </div>
-                <div>
-                    {this.renderButton(1)}
-                    {this.renderButton(2)}
-                    {this.renderButton(3)}
-                    {this.renderButtonOperator('+')}
-                </div>
-                <div>
-                    {this.renderButtonWide(0)}
-                    {this.renderButton('.')}
-                    {this.renderButtonOperator('=')}
-                </div>
-            </div>
-
+        <Display valueToShow={this.props.valueToShow}/>
+        <div className="button-panel">
+          <div>
+              {this.renderButton('AC')}
+              <div className="button"><button>+/-</button></div>
+              <div className="button"><button>%</button></div>
+              {this.renderButtonOperator('÷')}
+          </div>
+          <div>
+              {this.renderButton(7)}
+              {this.renderButton(8)}
+              {this.renderButton(9)}
+              {this.renderButtonOperator('x')}
+          </div>
+          <div>
+              {this.renderButton(4)}
+              {this.renderButton(5)}
+              {this.renderButton(6)}
+              {this.renderButtonOperator('-')}
+          </div>
+          <div>
+              {this.renderButton(1)}
+              {this.renderButton(2)}
+              {this.renderButton(3)}
+              {this.renderButtonOperator('+')}
+          </div>
+          <div>
+              {this.renderButtonWide(0)}
+              {this.renderButton('.')}
+              {this.renderButtonOperator('=')}
+          </div>
+        </div>
       </div>
     );
   }
@@ -133,23 +132,20 @@ class Calculator extends React.Component {
         symbol = '/'
         break;
       case '=':
-        if(this.state.operator != null && this.state.operator !== '='){
+        if(this.state.operator)
           this.doTheMath(+this.state.factorX, +this.state.factorY, this.state.operator)
-        } else {
-          this.setState({
-            result: this.state.result,
-          });
-        }
         break;
       case '.':
         console.log(this.state)
         break;
       default:
-        // add default code
+        // add default
     }
-    this.setState({
-      operator: symbol,
-    });
+    if(i === '+' || i === '-' || i === 'x' || i === '÷') {
+      this.setState({
+        operator: symbol,
+      });
+    }
   }
   
   doTheMath(x, y, operator) {
@@ -159,8 +155,11 @@ class Calculator extends React.Component {
       '*': function (x, y) { return x * y },
       '/': function (x, y) { return x / y }
     }
+    var outcome = calc[operator](x, y);
     this.setState({
-      result: calc[operator](x, y)
+      result: outcome,
+      factorX: outcome,
+      factorY: ''
     });
   }
 
@@ -168,7 +167,7 @@ class Calculator extends React.Component {
     let currentX = this.state.factorX;
     let currentY = this.state.factorY;
     if(Number.isInteger(i)) {
-      if(!this.state.operator) {
+      if(!this.state.factorX) {
         this.setState({
           factorX: currentX + '' + i,
         });
@@ -184,10 +183,10 @@ class Calculator extends React.Component {
 
   render() {
     let displayValue;
-    if(this.state.result){
-      displayValue = this.state.result;
-    } else if(this.state.factorY) {
+    if(this.state.factorY) {
       displayValue = this.state.factorY;
+    } else if(this.state.result){
+      displayValue = this.state.result;
     } else {
       displayValue = this.state.factorX;
     }
