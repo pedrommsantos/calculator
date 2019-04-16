@@ -63,7 +63,7 @@ class Panel extends React.Component {
           <div>
               {this.renderButton('AC')}
               <div className="button"><button>+/-</button></div>
-              <div className="button"><button>%</button></div>
+              {this.renderButton('%')}
               {this.renderButtonOperator('÷')}
           </div>
           <div>
@@ -138,6 +138,9 @@ class Calculator extends React.Component {
       case '.':
         console.log(this.state)
         break;
+      case '%':
+        console.log(this.state)
+        break;
       default:
         // add default
     }
@@ -166,8 +169,8 @@ class Calculator extends React.Component {
   handleClick(i) {
     let currentX = this.state.factorX;
     let currentY = this.state.factorY;
-    if(Number.isInteger(i)) {
-      if(!this.state.factorX) {
+    if(Number.isInteger(i) || i ==='.') {
+      if(!this.state.operator) {
         this.setState({
           factorX: currentX + '' + i,
         });
